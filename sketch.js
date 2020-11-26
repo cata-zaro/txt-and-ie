@@ -1,24 +1,42 @@
-var img1;
-var img2;
-var img3;
-var img4;
-var img5;
-var img6;
+/*Proyecto piano*/
 
-
-function preload(){
-img1 = loadimage(txt.jpg);
-img2 = loadimage(soobin.jpg);
-img3 = loadimage(yeonjun.jpg);
-img4 = loadimage(beomgyu.jpg);
-img5 = loadimage(taehyun.jpg);
-img6 = loadimage(hueningkai.jpg)
-}
-
+var notes = [ 60, 62, 64, 65, 67, 69, 71 ];
+var osc;
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(720, 400);
+osc = new p5.TriOsc();
+osc.start();
+  osc.amp(0);
 }
-
+function playNote(note,duration) {
+  osc.freq(midiToFreq(note))
+  osc.fade(0.5, 0.2);
+  if(duration) {
+    setTimeout(function() {
+               osc.fade(0,0.2);
+       }, duration-50);
+}
+}
 function draw() {
-  Image(img1, 0, 0, mouseX * 2, mouseY * 2);
+var w = width / notes.length;
+for (var i = 0; i < notes.length; i++) {
+var x = i * w;
+if(mouseX > x && mouseX < x + w && mouseY < height) {
+  if(mouseIsPressed) {
+fill(100,255,200);
+  } else{
+    fill(127);
+  }
+} else {
+  fill(200);
+}
+rect(x,0,w-1,height-1);
+ }
+}
+function mousePressed() {
+  var key = floor(map(mouseX,0,width,0,notes.length));
+    playNote(notes[key]);
+}
+ function mouseReleased() { 
+   osc.fade(0,0.5);
 }
